@@ -11,96 +11,174 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
 
-    <!-- Navigation -->
     <nav class="bg-indigo-600 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-check-circle text-2xl"></i>
-                    <span class="font-bold text-xl tracking-wider">CheckMark</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span id="user-email" class="text-sm font-medium hidden sm:block"></span>
-                    <button id="logoutBtn" class="hidden bg-indigo-800 hover:bg-indigo-900 px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                        Logout
-                    </button>
-                </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-check-circle text-2xl"></i>
+                <span class="font-bold text-xl tracking-wider">CheckMark</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="user-email" class="text-sm font-medium hidden sm:block"></span>
+                <button id="logoutBtn" class="hidden bg-indigo-800 hover:bg-indigo-900 px-4 py-2 rounded-md text-sm transition-colors text-white">Logout</button>
             </div>
         </div>
     </nav>
 
-    <!-- Authentication Section -->
     <main id="auth-section" class="max-w-md mx-auto px-4 py-16">
         <div class="bg-white rounded-xl shadow-md p-8 border border-gray-100">
             <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Welcome to CheckMark</h2>
             <div id="auth-error" class="hidden bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-sm text-center"></div>
             
-            <form id="auth-form" class="space-y-4">
+            <form id="auth-form" onsubmit="return false;" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="emailInput" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <input type="email" id="emailInput" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="passwordInput" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <input type="password" id="passwordInput" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
                 </div>
                 
                 <div class="flex gap-4 pt-4">
-                    <button type="button" id="loginBtn" class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                        Log In
-                    </button>
-                    <button type="button" id="signupBtn" class="flex-1 bg-white border-2 border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-50 transition-colors font-medium">
-                        Sign Up
-                    </button>
+                    <button type="button" id="loginBtn" class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 font-medium">Log In</button>
+                    <button type="button" id="signupBtn" class="flex-1 bg-white border-2 border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-50 font-medium">Sign Up</button>
                 </div>
             </form>
         </div>
     </main>
 
-    <!-- Main App Section -->
     <main id="app-section" class="max-w-4xl mx-auto px-4 py-8 hidden">
-        
-        <!-- Add Task Section -->
         <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-gray-100">
             <h2 class="text-lg font-semibold mb-4 text-gray-700">Add New Task</h2>
             <form id="taskForm" class="flex flex-col sm:flex-row gap-4">
-                <input type="text" id="taskInput" placeholder="What do you need to do?" required
-                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                
-                <select id="categorySelect" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                    <!-- Options populated by JS -->
-                </select>
-                
-                <button type="submit" id="submitBtn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium disabled:bg-gray-400">
-                    Add Task
-                </button>
+                <input type="text" id="taskInput" placeholder="What do you need to do?" required class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white">
+                <select id="categorySelect" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 bg-white"></select>
+                <button type="submit" id="submitBtn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 font-medium">Add Task</button>
             </form>
         </div>
-
-        <!-- Dashboard Categories -->
-        <div id="dashboard" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Categories will be injected here via JavaScript -->
-        </div>
+        <div id="dashboard" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
     </main>
 
     <script>
-        // Supabase Initialization
         const SUPABASE_URL = 'https://uqduseeiircpffhrabhr.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZHVzZWVpaXJjcGZmaHJhYmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MTcxMDcsImV4cCI6MjA5ODI5MzEwN30.4DUqtKrrKUj3RYSp9X_StQI94IosNZg5L1AFB81ZCMo';
-        
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // State Management
         let currentUser = null;
         let profileData = {
-            categories: [
-                "Diet & Nutrition", "Workout", "Study / Learning", 
-                "Work / Business", "Habits", "Tasks"
-            ],
+            categories: ["Diet & Nutrition", "Workout", "Study / Learning", "Work / Business", "Habits", "Tasks"],
             logs: []
         };
 
-        // DOM Elements
-        const authSection = document.getElementById('auth-section');
-        const appSection =Normally I can help with things like this, but I don't seem to have access to that content. You can try again or ask me for something else.
-        
+        const elements = {
+            authSection: document.getElementById('auth-section'),
+            appSection: document.getElementById('app-section'),
+            email: document.getElementById('emailInput'),
+            password: document.getElementById('passwordInput'),
+            error: document.getElementById('auth-error'),
+            loginBtn: document.getElementById('loginBtn'),
+            signupBtn: document.getElementById('signupBtn'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            userEmail: document.getElementById('user-email'),
+            taskForm: document.getElementById('taskForm'),
+            taskInput: document.getElementById('taskInput'),
+            categorySelect: document.getElementById('categorySelect'),
+            dashboard: document.getElementById('dashboard')
+        };
+
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                showApp();
+                await fetchProfile();
+            }
+        }
+
+        elements.loginBtn.addEventListener('click', async () => {
+            elements.error.classList.add('hidden');
+            elements.loginBtn.innerText = "Wait...";
+            const { data, error } = await supabase.auth.signInWithPassword({ email: elements.email.value, password: elements.password.value });
+            if (error) { showError(error.message); elements.loginBtn.innerText = "Log In"; }
+            else { currentUser = data.user; showApp(); await fetchProfile(); elements.loginBtn.innerText = "Log In"; }
+        });
+
+        elements.signupBtn.addEventListener('click', async () => {
+            elements.error.classList.add('hidden');
+            elements.signupBtn.innerText = "Wait...";
+            const { data, error } = await supabase.auth.signUp({ email: elements.email.value, password: elements.password.value });
+            if (error) { showError(error.message); elements.signupBtn.innerText = "Sign Up"; }
+            else { currentUser = data.user; showApp(); await fetchProfile(); elements.signupBtn.innerText = "Sign Up"; }
+        });
+
+        elements.logoutBtn.addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            currentUser = null;
+            showAuth();
+        });
+
+        function showError(msg) { elements.error.innerText = msg; elements.error.classList.remove('hidden'); }
+        function showApp() { elements.authSection.classList.add('hidden'); elements.appSection.classList.remove('hidden'); elements.logoutBtn.classList.remove('hidden'); elements.userEmail.innerText = currentUser.email; }
+        function showAuth() { elements.authSection.classList.remove('hidden'); elements.appSection.classList.add('hidden'); elements.logoutBtn.classList.add('hidden'); elements.email.value = ""; elements.password.value = ""; }
+
+        async function fetchProfile() {
+            const { data, error } = await supabase.from('profiles').select('*').eq('id', currentUser.id).single();
+            if (error && error.code === 'PGRST116') { await initializeProfile(); }
+            else if (data) { profileData.categories = data.categories || profileData.categories; profileData.logs = data.logs || []; updateCategoryDropdown(); renderDashboard(); }
+        }
+
+        async function initializeProfile() {
+            const newProfile = { id: currentUser.id, name: currentUser.email.split('@')[0], categories: profileData.categories, logs: [] };
+            await supabase.from('profiles').insert([newProfile]);
+            updateCategoryDropdown(); renderDashboard();
+        }
+
+        async function syncLogs() { await supabase.from('profiles').update({ logs: profileData.logs }).eq('id', currentUser.id); }
+
+        function updateCategoryDropdown() {
+            elements.categorySelect.innerHTML = '';
+            profileData.categories.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.innerText = cat; elements.categorySelect.appendChild(opt); });
+        }
+
+        function renderDashboard() {
+            elements.dashboard.innerHTML = ''; 
+            profileData.categories.forEach(category => {
+                const tasks = profileData.logs.filter(t => t.category === category);
+                const card = document.createElement('div'); card.className = 'bg-white rounded-xl shadow-sm border border-gray-100 p-5';
+                card.innerHTML = `<h3 class="font-bold text-gray-700 mb-3 uppercase tracking-wide border-b pb-2">${category}</h3>`;
+                const ul = document.createElement('ul'); ul.className = 'space-y-3';
+                if (tasks.length === 0) { ul.innerHTML = `<li class="text-sm text-gray-400 italic">No tasks yet.</li>`; }
+                else {
+                    tasks.forEach(task => {
+                        const li = document.createElement('li'); li.className = 'flex items-center justify-between group';
+                        li.innerHTML = `<label class="flex items-center cursor-pointer space-x-3 w-full">
+                            <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask('${task.id}')" class="w-5 h-5 text-indigo-600 rounded">
+                            <span class="text-gray-700 ${task.completed ? 'line-through text-gray-400' : ''}">${task.text}</span>
+                        </label>
+                        <button onclick="deleteTask('${task.id}')" class="text-red-400 ml-2 py-2 px-3"><i class="fas fa-trash"></i></button>`;
+                        ul.appendChild(li);
+                    });
+                }
+                card.appendChild(ul); elements.dashboard.appendChild(card);
+            });
+        }
+
+        elements.taskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newTask = { id: Date.now().toString(), text: elements.taskInput.value, category: elements.categorySelect.value, completed: false, date: new Date().toISOString() };
+            profileData.logs.push(newTask); renderDashboard(); elements.taskInput.value = ''; await syncLogs();
+        });
+
+        window.toggleTask = async (id) => {
+            const task = profileData.logs.find(t => t.id === id);
+            if (task) { task.completed = !task.completed; renderDashboard(); await syncLogs(); }
+        };
+
+        window.deleteTask = async (id) => {
+            profileData.logs = profileData.logs.filter(t => t.id !== id); renderDashboard(); await syncLogs();
+        };
+
+        checkSession();
+    </script>
+</body>
+</html>
