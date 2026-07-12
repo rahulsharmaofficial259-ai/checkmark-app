@@ -599,17 +599,51 @@ async function deleteCategory(catId){
   // ══ QUICK START TEMPLATES ══
 const TEMPLATES = {
   iim: {
-    name: 'IIM Student Plan (General)',
+    name: 'IIM Student Plan',
     emoji: '🎓',
     desc: 'Diet, workout and study tasks designed for IIM schedule',
-    categories: [ /* your original general iim template - unchanged */ ]
+    categories: [
+      {id:'diet', name:'Diet & Nutrition', emoji:'🥗', color:'#22c55e', tasks:[
+        'Eat curd at every mess meal',
+        'Drink 2.5 to 3 litres of water today',
+        'Carry almonds and fruit in bag all day',
+        'No sugar in chai',
+        'No late night Maggi or hostel snacking',
+        'Keep dinner lighter than lunch',
+        'Finish dinner by 9 PM',
+      ]},
+      {id:'workout', name:'Workout', emoji:'💪', color:'#6c63ff', tasks:[
+        '15 squats x3 rounds',
+        '10 knee push-ups x3 rounds',
+        '15 glute bridges x3 rounds',
+        '30 sec plank x3 rounds',
+        '10 lunges each leg x3 rounds',
+      ]},
+      {id:'study', name:'Study / Learning', emoji:'📚', color:'#3b82f6', tasks:[
+        'Review todays class notes',
+        'Complete assigned readings',
+        'Prepare for tomorrows sessions',
+        'Work on pending assignments',
+        'Group study or discussion session',
+      ]},
+      {id:'habits', name:'Habits', emoji:'⚡', color:'#ec4899', tasks:[
+        'Sleep by 1 AM at latest',
+        'Drink water before checking phone',
+        'No phone during meals',
+        '10 min campus walk',
+      ]},
+      {id:'tasks', name:'Tasks', emoji:'✅', color:'#14b8a6', tasks:[
+        'Check emails and messages',
+        'Plan tomorrows schedule',
+      ]},
+    ]
   },
 
-  // === Shweta's Full IIM Kozhikode Plan (with timings) ===
+   // New Detailed Shweta Plan with timings
   shweta: {
     name: "Shweta's IIM Kozhikode Plan",
     emoji: '🎯',
-    desc: 'Term I - Full schedule with classes, diet & workout (PGP Section C)',
+    desc: 'Term I - Full schedule with classes, diet, workout & habits',
     categories: [
       {
         id: 'classes',
@@ -635,7 +669,7 @@ const TEMPLATES = {
         ]
       },
       {
-      id: 'diet',
+        id: 'diet',
         name: 'Diet & Nutrition',
         emoji: '🥗',
         color: '#22c55e',
@@ -644,8 +678,9 @@ const TEMPLATES = {
           'Drink 2.5–3 litres water today',
           'Mid-morning snack (fruit + 10-12 almonds)',
           'No sugar in chai',
-          'No late night Maggi or snacking',
-          'Dinner lighter than lunch - finish by 9 PM'
+          'No late night Maggi or hostel snacking',
+          'Keep dinner lighter than lunch',
+          'Finish dinner by 9 PM'
         ]
       },
       {
@@ -654,14 +689,14 @@ const TEMPLATES = {
         emoji: '💪',
         color: '#6c63ff',
         tasks: [
-          '30 min workout (Mon/Wed/Fri strength OR Tue/Thu cardio)',
+          '30 min workout (Mon/Wed/Fri strength or Tue/Thu cardio)',
           'Squats 15x3 + Knee Push-ups 10x3',
           'Glute Bridges 15x3 + Plank 30s x3',
           'Lunges 10 each leg x3'
         ]
       },
       {
-  id: 'habits',
+        id: 'habits',
         name: 'Habits',
         emoji: '⚡',
         color: '#ec4899',
@@ -675,8 +710,19 @@ const TEMPLATES = {
     ]
   },
 
-  fitness: { /* your original fitness template - unchanged */ },
-  work: { /* your original work template - unchanged */ }
+  fitness: {
+    name: 'Fitness & Health Plan',
+    emoji: '🏃',
+    desc: 'Complete diet and workout tracking for weight loss',
+    categories: [ /* your original fitness template */ ]
+  },
+
+  work: {
+    name: 'Work & Productivity Plan',
+    emoji: '💼',
+    desc: 'Daily work, business and personal tasks tracker',
+    categories: [ /* your original work template */ ]
+  }
 };
 
 function openTemplateModal(){
