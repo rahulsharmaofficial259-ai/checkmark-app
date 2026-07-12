@@ -163,6 +163,7 @@ input:focus{border-color:var(--accent);}
 </style>
 </head>
 <body>
+
 <div id="loader"><div class="spin"></div><p>Loading CheckMark...</p></div>
 <div id="toast"></div>
 
@@ -226,7 +227,7 @@ input:focus{border-color:var(--accent);}
           <div class="page-title">My Plan</div>
           <div class="page-sub" style="margin-bottom:0">Tasks repeat every day.</div>
         </div>
-        <button class="add-cat-btn" onclick="openCatModal()">+ Category</button>
+        <button class="add-cat-btn" onclick="openTemplateModal()" style="background:var(--green);margin-right:6px">⚡ Templates</button><button class="add-cat-btn" onclick="openCatModal()">+ Category</button>
       </div>
       <div style="margin-bottom:18px"></div>
       <div id="plan-cats"></div>
@@ -250,18 +251,11 @@ input:focus{border-color:var(--accent);}
       </div>
       <div class="card"><div class="sec-label">Recent Days</div><div id="day-list"></div></div>
     </div>
-    
-    <!-- PROFILE -->
+
+ <!-- PROFILE -->
     <div class="page" id="page-profile">
       <div class="page-title">Profile</div>
       <div class="page-sub">Account & settings</div>
-       <!-- MAGIC MASTER PLAN BUTTON -->
-      <div class="card" style="text-align:center;padding:22px;background:linear-gradient(135deg, var(--accent), var(--accent2)); border:none;">
-        <h3 style="color:#fff;font-size:16px;font-weight:900;margin-bottom:6px;">✨ Load Master Plan</h3>
-        <p style="color:#fff;font-size:12px;opacity:0.9;margin-bottom:16px;line-height:1.5;">Automatically add Shweta's Diet, Workout, and IIMK Schedule to your plan.</p>
-        <button onclick="loadMasterPlan()" style="background:#fff;color:var(--accent);border:none;border-radius:10px;font-size:13px;font-weight:800;padding:10px 20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.1);">Add to My Plan</button>
-      </div>
-
       <div class="card" style="text-align:center;padding:26px">
         <div class="profile-av" id="prof-av"></div>
         <div class="profile-name" id="prof-name"></div>
@@ -269,7 +263,6 @@ input:focus{border-color:var(--accent);}
         <div id="prof-admin-badge" style="display:none"><span class="admin-badge">👑 Admin</span></div>
         <button class="btn-logout" onclick="doLogout()">Log Out</button>
       </div>
-      
       <div id="admin-panel" style="display:none">
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -308,12 +301,38 @@ input:focus{border-color:var(--accent);}
     </button>
   </nav>
 </div>
+<!-- TEMPLATE MODAL -->
+<div class="modal-overlay" id="tpl-modal" onclick="closeTplBg(event)">
+  <div class="modal-box" style="max-height:80vh;overflow-y:auto">
+    <div class="modal-title">⚡ Quick Start Templates</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Load a pre-built plan instantly. You can edit or add to it anytime.</div>
+    <div id="tpl-body"></div>
+    <button class="btn-cancel" style="width:100%;margin-top:6px" onclick="closeTemplateModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- NEW CATEGORY MODAL -->
+<div class="modal-overlay" id="cat-modal" onclick="closeCatModalBg(event)">
+  <div class="modal-box">
+    <div class="modal-title">New Category</div>
+    <div class="field-label" style="margin-bottom:8px">Pick an emoji</div>
+    <div class="emoji-grid" id="emoji-grid"></div>
+    <div class="field-label" style="margin-bottom:8px">Category name</div>
+    <input type="text" id="cat-name-input" placeholder="e.g. Morning Routine" style="margin-bottom:14px" maxlength="30">
+    <div class="field-label" style="margin-bottom:8px">Color</div>
+    <div class="color-grid" id="color-grid"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeCatModal()">Cancel</button>
+      <button class="btn-create" onclick="createCategory()">Create</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://uqduseeiircpffhrabhr.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxZHVzZWVpaXJjcGZmaHJhYmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3MTcxMDcsImV4cCI6MjA5ODI5MzEwN30.4DUqtKrrKUj3RYSp9X_StQI94IosNZg5L1AFB81ZCMo';
+const SUPABASE_ANON_KEY = 'sb_publishable_LDF-5FkaZf2mG3ZNqvI1vg_KBJT4o8R';
 const ADMIN_EMAIL = 'rahulsharmaofficial259@gmail.com';
-
-const DEFAULT_CATEGORIES = [
+  const DEFAULT_CATEGORIES = [
   {id:'diet',    name:'Diet & Nutrition', emoji:'🥗', color:'#22c55e', tasks:[]},
   {id:'workout', name:'Workout',          emoji:'💪', color:'#6c63ff', tasks:[]},
   {id:'study',   name:'Study / Learning', emoji:'📚', color:'#3b82f6', tasks:[]},
@@ -321,7 +340,7 @@ const DEFAULT_CATEGORIES = [
   {id:'habits',  name:'Habits',           emoji:'⚡', color:'#ec4899', tasks:[]},
   {id:'tasks',   name:'Tasks',            emoji:'✅', color:'#14b8a6', tasks:[]},
 ];
-const EMOJIS = ['🥗','💪','📚','💼','⚡','✅','🎓','🎯','🧘','🏃','💊','💧','😴','🧠','🎨','🎵','💰','📝','🏠','❤️','🌱','🔥','⭐','🚀','🎮'];
+const EMOJIS = ['🥗','💪','📚','💼','⚡','✅','🎯','🧘','🏃','💊','💧','😴','🧠','🎨','🎵','💰','📝','🏠','❤️','🌱','🔥','⭐','🚀','🎮'];
 const COLORS = ['#6c63ff','#22c55e','#3b82f6','#f59e0b','#ec4899','#14b8a6','#ef4444','#f97316','#a855f7','#06b6d4'];
 
 const {createClient} = supabase;
@@ -329,6 +348,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
 let userProfile = null;
+
 function todayKey(){return new Date().toISOString().split('T')[0];}
 function getLast30(){const days=[];for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0]);}return days;}
 function fmtDate(d){return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'});}
@@ -348,9 +368,8 @@ function showErr(msg){
   const el=document.getElementById('auth-error');
   el.textContent=msg;el.classList.add('shake');
   setTimeout(()=>el.classList.remove('shake'),400);
-}
-
-async function loadProfile(){
+  }
+  async function loadProfile(){
   if(!currentUser)return;
   const {data,error}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
   if(error||!data){
@@ -365,6 +384,7 @@ async function loadProfile(){
     }
   }
 }
+
 async function saveProfile(){
   if(!currentUser||!userProfile)return;
   await sb.from('profiles').upsert({id:currentUser.id,name:userProfile.name,categories:userProfile.categories,logs:userProfile.logs});
@@ -384,9 +404,8 @@ function calcStreak(){
     count++;d.setDate(d.getDate()-1);
   }
   return count;
-}
-
-function getDayScore(key){
+     }
+  function getDayScore(key){
   if(!userProfile)return 0;
   const total=userProfile.categories.reduce((a,c)=>a+c.tasks.length,0);
   if(!total)return 0;
@@ -415,9 +434,8 @@ async function doLogin(){
   const {error}=await sb.auth.signInWithPassword({email,password:pass});
   btn.disabled=false;btn.textContent='Login';
   if(error)return showErr(error.message);
-}
-
-async function doSignup(){
+  }
+  async function doSignup(){
   const name=document.getElementById('su-name').value.trim();
   const email=document.getElementById('su-email').value.trim();
   const pass=document.getElementById('su-pass').value;
@@ -438,8 +456,9 @@ async function doLogout(){
   document.getElementById('auth-screen').classList.add('active');
   document.getElementById('app-screen').classList.remove('active');
   switchPage('today');
-  }
-  async function loadApp(user){
+}
+
+async function loadApp(user){
   currentUser=user;
   setLoading(true);
   await loadProfile();
@@ -456,9 +475,8 @@ async function doLogout(){
   document.getElementById('admin-panel').style.display=isAdmin?'block':'none';
   if(isAdmin)loadAdminUsers();
   renderAll();
-}
-
-function switchPage(p){
+  }
+  function switchPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
@@ -512,8 +530,9 @@ function renderToday(){
     html+='</div></div>';
   });
   document.getElementById('today-cats').innerHTML=html;
-  }
-  function toggleCat(id){document.getElementById(id)?.classList.toggle('open');}
+}
+
+function toggleCat(id){document.getElementById(id)?.classList.toggle('open');}
 
 async function toggleTask(catId,task){
   const key=todayKey();
@@ -524,9 +543,8 @@ async function toggleTask(catId,task){
   if(idx>=0)arr.splice(idx,1);else arr.push(task);
   await saveProfile();
   renderToday();
-}
-
-function renderPlan(){
+    }
+  function renderPlan(){
   if(!userProfile)return;
   let html='';
   userProfile.categories.forEach(cat=>{
@@ -570,14 +588,140 @@ async function removeTask(catId,task){
   renderPlan();
 }
 
+
 async function deleteCategory(catId){
   if(!confirm('Delete this category and all its tasks?'))return;
   userProfile.categories=userProfile.categories.filter(c=>c.id!==catId);
   await saveProfile();
   renderPlan();
   showToast('Category deleted');
-  }
-  let selEmoji=EMOJIS[0],selColor=COLORS[0];
+    }
+  // ══ QUICK START TEMPLATES ══
+const TEMPLATES={
+  iim:{
+    name:'IIM Student Plan',emoji:'🎓',
+    desc:'Diet, workout and study tasks designed for IIM schedule',
+    categories:[
+      {id:'diet',name:'Diet & Nutrition',emoji:'🥗',color:'#22c55e',tasks:[
+        'Eat curd at every mess meal',
+        'Drink 2.5 to 3 litres of water today',
+        'Carry almonds and fruit in bag all day',
+        'No sugar in chai',
+        'No late night Maggi or hostel snacking',
+        'Keep dinner lighter than lunch',
+        'Finish dinner by 9 PM',
+      ]},
+      {id:'workout',name:'Workout',emoji:'💪',color:'#6c63ff',tasks:[
+        '15 squats x3 rounds',
+        '10 knee push-ups x3 rounds',
+        '15 glute bridges x3 rounds',
+        '30 sec plank x3 rounds',
+        '10 lunges each leg x3 rounds',
+      ]},
+      {id:'study',name:'Study / Learning',emoji:'📚',color:'#3b82f6',tasks:[
+        'Review todays class notes',
+        'Complete assigned readings',
+        'Prepare for tomorrows sessions',
+        'Work on pending assignments',
+        'Group study or discussion session',
+      ]},
+      {id:'habits',name:'Habits',emoji:'⚡',color:'#ec4899',tasks:[
+        'Sleep by 1 AM at latest',
+        'Drink water before checking phone',
+        'No phone during meals',
+        '10 min campus walk',
+      ]},
+      {id:'tasks',name:'Tasks',emoji:'✅',color:'#14b8a6',tasks:[
+        'Check emails and messages',
+        'Plan tomorrows schedule',
+      ]},
+    ]
+  },
+  fitness:{
+    name:'Fitness & Health Plan',emoji:'🏃',
+    desc:'Complete diet and workout tracking for weight loss',
+    categories:[
+      {id:'diet',name:'Diet & Nutrition',emoji:'🥗',color:'#22c55e',tasks:[
+        'Protein in every meal',
+        'Drink 3 litres of water',
+        'No sugar or cold drinks today',
+        'No fried snacks',
+        'Dinner before 8 PM',
+        'Salad in at least one meal',
+      ]},
+      {id:'workout',name:'Workout',emoji:'💪',color:'#6c63ff',tasks:[
+        '30 min workout completed',
+        '8000 steps today',
+        'Stretching or cool down done',
+      ]},
+      {id:'habits',name:'Habits',emoji:'⚡',color:'#ec4899',tasks:[
+        'Sleep 7 hours minimum',
+        'No screen 30 min before bed',
+        'Morning weigh-in logged',
+      ]},
+    ]
+  },
+  work:{
+    name:'Work & Productivity Plan',emoji:'💼',
+    desc:'Daily work, business and personal tasks tracker',
+    categories:[
+      {id:'work',name:'Work / Business',emoji:'💼',color:'#f59e0b',tasks:[
+        'Reply to all important emails',
+        'Complete top 3 priority tasks',
+        'Team sync or meetings done',
+        'Review daily goals',
+        'Plan tomorrows tasks',
+      ]},
+      {id:'study',name:'Learning',emoji:'📚',color:'#3b82f6',tasks:[
+        'Read for 30 minutes',
+        'Learn one new thing today',
+      ]},
+      {id:'habits',name:'Habits',emoji:'⚡',color:'#ec4899',tasks:[
+        'Morning routine completed',
+        'Exercise or walk done',
+        'No social media before 10 AM',
+      ]},
+      {id:'tasks',name:'Tasks',emoji:'✅',color:'#14b8a6',tasks:[
+        'Inbox zero',
+        'Daily review done',
+        ]},
+    ]
+  },
+};
+
+function openTemplateModal(){
+  const html=Object.entries(TEMPLATES).map(([key,t])=>`
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer" onclick="loadTemplate('${key}')">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span style="font-size:26px">${t.emoji}</span>
+        <div>
+          <div style="font-size:14px;font-weight:800;color:var(--text)">${t.name}</div>
+          <div style="font-size:11px;color:var(--muted)">${t.desc}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+        ${t.categories.map(c=>`<span style="background:${c.color}22;border:1px solid ${c.color}55;color:${c.color};border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700">${c.emoji} ${c.name}</span>`).join('')}
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--accent2);font-weight:700">Tap to load → ${t.categories.reduce((a,c)=>a+c.tasks.length,0)} tasks across ${t.categories.length} categories</div>
+    </div>`).join('');
+  document.getElementById('tpl-body').innerHTML=html;
+  document.getElementById('tpl-modal').classList.add('show');
+}
+function closeTemplateModal(){document.getElementById('tpl-modal').classList.remove('show');}
+function closeTplBg(e){if(e.target===document.getElementById('tpl-modal'))closeTemplateModal();}
+async function loadTemplate(key){
+  const t=TEMPLATES[key];if(!t)return;
+  const hasData=userProfile.categories.some(c=>c.tasks.length>0);
+  if(hasData&&!confirm('This will replace your current plan with '+t.name+'. Continue?'))return;
+  userProfile.categories=t.categories.map(c=>({...c,id:c.id||uid(),tasks:[...c.tasks]}));
+  await saveProfile();
+  closeTemplateModal();
+  renderPlan();
+  showToast(t.emoji+' '+t.name+' loaded!');
+}
+
+let selEmoji=EMOJIS[0],selColor=COLORS[0];
+
 function openCatModal(){
   selEmoji=EMOJIS[0];selColor=COLORS[0];
   document.getElementById('cat-name-input').value='';
@@ -604,64 +748,8 @@ async function createCategory(){
   renderPlan();
   showToast(selEmoji+' '+name+' created!');
 }
-// ✨ THE MAGIC MASTER PLAN FUNCTION ✨
-async function loadMasterPlan() {
-  if(!confirm("This will automatically add Shweta's Diet, Workout, and IIMK Schedule to your plan. Continue?")) return;
 
-  const planData = {
-    'diet': [
-      "Breakfast (7:30 AM): Idli/Poha + Curd + Dal",
-      "Snack (11:00 AM): 1 Fruit + 12 Almonds",
-      "Lunch (1:30 PM): Dal + 2 Chapati + Sabzi + Curd + Salad",
-      "Dinner (7:30 PM): Light Dal + 1 Chapati + Sabzi"
-    ],
-    'workout': [
-      "Mon/Wed/Fri (6 PM): Bodyweight Circuit (Squats, Push-ups, Lunges)",
-      "Tue/Thu (6 PM): 30 Min Cardio (Walk/Jog/Zumba)",
-      "Saturday: 20 Min Yoga & Stretching"
-    ],
-    'habits': [
-      "Sleep 6.5 to 7 Hours",
-      "Drink 1L Water from bottle"
-    ],
-    'classes': [
-      "Mon: BC (14:40)",
-      "Tue: OME (09:15), BC (16:15), FMI (17:50)",
-      "Wed: DA (09:15), DA (10:50), OME (17:50)",
-      "Thu: FMI (10:50), FMI (12:25), FA (17:50)",
-      "Fri: OB (14:40), OB (16:15)",
-      "Sat: OB (10:50)"
-    ]
-  };
-   // Check if "IIMK Classes" category exists, if not, create it
-  let classCat = userProfile.categories.find(c => c.id === 'classes');
-  if(!classCat) {
-    userProfile.categories.push({id: 'classes', name: 'IIMK Classes', emoji: '🎓', color: '#a855f7', tasks: []});
-  }
-
-  // Inject all tasks into their respective categories
-  for(const [catId, newTasks] of Object.entries(planData)) {
-    let cat = userProfile.categories.find(c => c.id === catId);
-    if(cat) {
-      newTasks.forEach(task => {
-        if(!cat.tasks.includes(task)) {
-          cat.tasks.push(task);
-        }
-      });
-    }
-  }
-
-  setLoading(true);
-  await saveProfile();
-  setLoading(false);
-  
-  showToast("Master Plan Loaded Successfully! ✨");
-  renderAll();
-  
-  // Instantly switch them over to the plan tab to see the magic
-  switchPage('plan'); 
-    }
-  function renderHistory(){
+function renderHistory(){
   if(!userProfile)return;
   const days=getLast30();
   const scores=days.map(d=>getDayScore(d));
@@ -685,7 +773,7 @@ async function loadMasterPlan() {
     const doneD=userProfile.categories.reduce((a,c)=>a+(log[c.id]||[]).length,0);
     return '<div class="day-row"><div class="day-dt"><div class="day-wd">'+fmtDay(d)+'</div><div class="day-d">'+fmtDate(d)+'</div></div><div class="day-info"><div class="prog-wrap"><div class="prog-fill" style="width:'+p+'%;background:'+dotColor(p)+'"></div></div><div style="font-size:11px;color:var(--muted);margin-top:4px">'+(p===0?'No data':doneD+' of '+totalD+' tasks done')+'</div></div><div class="day-pct" style="color:'+dotColor(p)+'">'+p+'%</div></div>';
   }).join('')||'<div style="color:var(--muted);font-size:13px;padding:12px 0">No data yet. Start checking off today!</div>';
-  }
+      }
   async function loadAdminUsers(){
   const wrap=document.getElementById('admin-users-wrap');
   wrap.innerHTML='<div style="color:var(--muted);font-size:13px">Loading...</div>';
@@ -700,6 +788,7 @@ async function loadMasterPlan() {
   html+='</tbody></table></div><div style="font-size:11px;color:var(--muted);margin-top:10px">'+data.length+' total users</div>';
   wrap.innerHTML=html;
 }
+
 async function adminDeleteUser(uid,name){
   if(!confirm('Delete all data for '+name+'? Cannot be undone.'))return;
   await sb.from('profiles').delete().eq('id',uid);
@@ -718,6 +807,15 @@ sb.auth.onAuthStateChange(async(event,session)=>{
     document.getElementById('app-screen').classList.remove('active');
   }
 });
+
+// Safety net: never let the loader hang forever, even if Supabase is slow/unreachable
+setTimeout(()=>{
+  setLoading(false);
+  if(!document.getElementById('auth-screen').classList.contains('active') &&
+     !document.getElementById('app-screen').classList.contains('active')){
+    document.getElementById('auth-screen').classList.add('active');
+  }
+}, 4000);
 </script>
 </body>
 </html>
